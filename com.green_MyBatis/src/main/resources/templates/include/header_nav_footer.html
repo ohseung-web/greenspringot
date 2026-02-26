@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymleaf.com">
+	<header th:fragment="header">
+		<div id="top">
+			<h3>MEMBER JOIN</h3>
+		</div>
+		<div id="header_wrap">
+			<a th:href="@{/}">HOME</a>
+			<!-- <a th:href="@{/member/signup}">회원가입</a>
+			<a th:href="@{/member/login}">로그인</a> -->
+			
+			<th:block th:if="${session.loginedMember == null}">
+				<a th:href="@{/member/signup}">회원가입</a>
+				<a th:href="@{/member/login}">로그인</a>
+			</th:block>
+
+			<th:block th:if="${session.loginedMember != null}">
+				<span style="font-weight: bold; color: #2c3e50;">
+		            <span th:if="${session.loginedMember.id == 'admin1234'}" style="color: blue;">관리자</span>
+		            
+		            <span th:unless="${session.loginedMember.id == 'admin1234'}">
+		                <span th:text="${session.loginedMember.id}" style="color: #e74c3c;"></span>님 환영합니다!
+		            </span>
+		        </span>
+				<a th:href="@{/member/logout}">로그아웃</a>
+				
+				<th:block th:if="${session.loginedMember.id == 'admin1234'}">
+					<a th:href="@{/member/list}" style="color: blue; font-weight: bold;">[회원목록]</a>
+				</th:block>
+				
+				<a th:href="@{/member/memberInfo(id=${session.loginedMember.id})}">내정보</a>
+			</th:block>
+			
+			
+			<a th:href="@{/board/list}">게시판</a>
+		</div>
+	</header>
+	<nav th:fragment="nav">
+		<div id="nav_wrap">
+			<a th:href="@{/example}">EXAMPLE</a>
+		</div>
+	</nav>
+	<footer th:fragment="footer">
+		<div id="footer_wrap">Copyright OFFICE @Green</div>
+	</footer>
+</html>
+

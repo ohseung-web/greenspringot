@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title th:replace="~{/include/title.html::title}"></title>
+	<Link rel="stylesheet" th:href="@{/css/common.css}">
+	<Link rel="stylesheet" th:href="@{/css/header_nav_footer.css}">
+	<Link rel="stylesheet" th:href="@{/css/member.css}">
+	
+</head>
+<body>
+	<header th:replace="~{/include/header_nav_footer.html::header}"></header>
+	<nav th:replace="~{/include/header_nav_footer.html::nav}"></nav>
+	
+	<section>
+		<div id="section_wrap">
+		    <div class="word">
+		       회원 가입 결과
+		    </div>
+			<div class="content">
+			  <div th:if="${result > 0 }">
+			     <h2>회원가입 성공</h2>
+			  </div>
+			  <div th:if="${result <= 0 }">
+			     <h2>회원가입 실패</h2>
+			  </div>
+			  
+			</div>
+		</div>
+	</section>
+	
+	<nav th:replace="~{/include/header_nav_footer.html::footer}"></nav>
+</body>
+</html>
+

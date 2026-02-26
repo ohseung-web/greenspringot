@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+"https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+<!-- <settings>
+	<setting name="cacheEnabled" value="true" />
+</settings> -->
+
+ <typeAliases>
+ 	<typeAlias alias="MemberDTO" type="com.green.member.MemberDTO"/>
+ 	<typeAlias alias="BoardDTO" type="com.green.board.BoardDTO"/>
+ 	<typeAlias alias="carDTO" type="com.green.carproduct.CarProductDTO"/>
+ </typeAliases>
+
+ 
+  <!--  <mappers>
+        <mapper resource="mybatis/mappers/member-mapper.xml"/>
+    </mappers> -->
+    
+    
+</configuration>
+

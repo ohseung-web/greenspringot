@@ -1,0 +1,48 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title th:replace="~{/include/title.html::title}">Member Join</title>
+<Link rel="stylesheet" th:href="@{/css/common.css}">
+<Link rel="stylesheet" th:href="@{/css/header_nav_footer.css}">
+<Link rel="stylesheet" th:href="@{/css/home.css}">
+<Link rel="stylesheet" th:href="@{/css/board.css}">
+
+<!-- “defer는 ‘HTML 다 만든 다음에 JS 실행해!’라는 뜻” -->
+<script th:src="@{/js/member.js}" defer></script>
+
+</head>
+<body>
+	<header th:replace="~{/include/header_nav_footer.html::header}"></header>
+	<nav th:replace="~{/include/header_nav_footer.html::nav}"></nav>
+	<section>
+		   <h2>내 작성 글 목록</h2>
+		    <table border="1">
+		        <tr>
+		            <th>번호</th>
+		            <th>제목</th>
+		            <th>작성일</th>
+		            <th>조회수</th>
+		        </tr>
+		        <tr th:each="li : ${list}">
+		            <td th:text="${li.num}"></td>
+		            <td>
+		                <a th:href="@{/board/boardInfo(num=${li.num})}" th:text="${li.subject}"></a>
+		            </td>
+		            <td th:text="${li.reg_date}"></td>
+		            <td th:text="${li.readcount}"></td>
+		        </tr>
+		    </table>
+		
+		    <div class="paging">
+		        <a th:if="${ph.prev}" th:href="@{/member/mypage(page=${ph.startPage - 1})}">이전</a>
+		        <span th:each="i : ${#numbers.sequence(ph.startPage, ph.endPage)}">
+		            <a th:href="@{/member/mypage(page=${i})}" th:text="${i}" 
+		               th:style="${i == ph.pageNum} ? 'font-weight:bold;color:red;' : ''"></a>
+		        </span>
+		        <a th:if="${ph.next}" th:href="@{/member/mypage(page=${ph.endPage + 1})}">다음</a>
+		    </div>
+	</section>
+	
+	<footer th:replace="~{/include/header_nav_footer.html::footer}"></footer>
+</body>
+</html>

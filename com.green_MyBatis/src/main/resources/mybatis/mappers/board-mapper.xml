@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.green.board.mapper.BoardMapper">
+
+      <insert id="insertBoard" parameterType="BoardDTO">
+        INSERT INTO board(writer,subject,writerPw,content,id,image) 
+        VALUES(#{writer},#{subject},#{writerPw},#{content},#{id},#{image})
+      </insert>
+      
+      <select id="getAllBoard" resultType="BoardDTO">
+          SELECT * FROM board ORDER BY num DESC
+      </select>
+     
+    	<update id="updateReadCount" parameterType="int">
+		    UPDATE board SET readcount = readcount + 1 WHERE num = #{num}
+		</update>
+		
+		<select id="getOneBoard" parameterType="int" resultType="BoardDTO">
+		    SELECT * FROM board WHERE num = #{num}
+		</select>
+     
+	     <update id="updateBoard" parameterType="BoardDTO">
+	        UPDATE board SET subject=#{subject}, content=#{content} 
+	        WHERE num=#{num} AND writerPw=#{writerPw}
+	     </update>
+	
+	    <delete id="deleteBoard">
+		    DELETE FROM board 
+		    WHERE num = #{num} AND writerPw = #{writerPw}
+		</delete>
+	    
+	     <select id="getSearchBoard" resultType="BoardDTO">
+		    SELECT * FROM board
+		    <where>
+		        <choose>
+		            <when test="searchType == 'subject'">
+		                subject LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <otherwise>
+		                content LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </otherwise>
+		        </choose>
+		    </where>
+		    ORDER BY num DESC
+		</select>
+    
+    	<!-- 게시판 페이징 : 전체 게시글 수 -->
+    	<select id="getAllcount" resultType="int">
+    		SELECT COUNT(*) FROM board
+    	</select>
+    	
+    	<!-- 게시판 페이징 : startRow ~ pageSize 목록보기 -->
+    	<select id="getPageList" resultType="BoardDTO">
+		    SELECT *
+		    FROM board
+		    ORDER BY num DESC
+		    LIMIT #{startRow}, #{pageSize}
+		</select>
+    	
+    	
+    	<select id="getPageBoard" resultType="BoardDTO">
+		    SELECT * FROM board 
+		    ORDER BY num DESC 
+		    LIMIT #{offset}, #{limit}
+		</select>
+		
+		<!-- 검색 결과 개수 -->
+		<select id="getSearchCount" resultType="int">
+		    SELECT COUNT(*) FROM board
+		    <where>
+		        <choose>
+		            <when test="searchType == 'subject'">
+		                subject LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <otherwise>
+		                content LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </otherwise>
+		        </choose>
+		    </where>
+		</select>
+		
+		<!-- 검색 + 페이징 -->
+		<select id="getSearchPageList" resultType="BoardDTO">
+		    SELECT * FROM board
+		    <where>
+		        <choose>
+		            <when test="searchType == 'subject'">
+		                subject LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </when>
+		            <otherwise>
+		                content LIKE CONCAT('%', #{searchKeyword}, '%')
+		            </otherwise>
+		        </choose>
+		    </where>
+		    ORDER BY num DESC
+		    LIMIT #{startRow}, #{pageSize}
+		</select>
+		
+		<select id="getMyBoardCount" resultType="int">
+		    SELECT COUNT(*) FROM board WHERE id = #{loginId}
+		</select>
+		
+		<select id="getMyBoardList" resultType="BoardDTO">
+		    SELECT 
+		        b.num, 
+		        b.subject, 
+		        b.reg_date, 
+		        b.readcount, 
+		        m.name as writer  FROM board b
+		    INNER JOIN member m ON b.id = m.id
+		    WHERE b.id = #{loginId}
+		    ORDER BY b.num DESC
+		    LIMIT #{startRow}, #{pageSize}
+		</select>
+		
+</mapper>

@@ -1,0 +1,127 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title th:replace="~{/include/title.html::title}">Member Join</title>
+<Link rel="stylesheet" th:href="@{/css/common.css}">
+<Link rel="stylesheet" th:href="@{/css/header_nav_footer.css}">
+<Link rel="stylesheet" th:href="@{/css/home.css}">
+<Link rel="stylesheet" th:href="@{/css/board.css}">
+
+<!-- “defer는 ‘HTML 다 만든 다음에 JS 실행해!’라는 뜻” -->
+<script th:src="@{/js/member.js}" defer></script>
+
+</head>
+<body>
+	<header th:replace="~{/include/header_nav_footer.html::header}"></header>
+	<nav th:replace="~{/include/header_nav_footer.html::nav}"></nav>
+	<section>
+		<div id="section_wrap">
+			<div class="word">게시글 보기</div>
+			<div class="content">
+			   <table width="700" border="1">
+				<tr height="40">
+					<td colspan="5" align="right">
+						<!-- <a th:href="@{/board/write}" class="write-btn">글쓰기</a> -->
+						<a href="#" id="writeBtn" class="write-btn"
+						   th:data-login="${session.loginedMember != null}">
+						   글쓰기
+						</a>
+					</td>
+				</tr>
+				<tr height="40">
+					<td width="50" align="center">번호</td>
+					<td width="320" align="center">제목</td>
+					<td width="100" align="center">작성자</td>
+					<td width="150" align="center">작성일자</td>
+					<td width="80" align="center">조회수</td>
+				</tr>
+				 <tr th:each="li, stat: ${list}">
+			  	   <!-- 	  <td th:text="${stat.index + 1}"></td>	 -->
+			  	   				<!-- 게시글의 번호를 최신순으로 계산하는 공식  -->
+			  	   				<!-- 전체개시글 수 - ((현재페이지 번호 -1)*한 화면 개시글개수) - 현재 글 index번호  -->
+			  	   				<!-- 20 - ((1 -1)* 5) - 0 => 20  -->
+			  	      <td th:text="${ph.totalCnt - ((ph.pageNum - 1) * ph.pageSize) - stat.index}"></td>
+			  	   	  <td>
+			  	   	  	<a th:href="@{/board/boardInfo(num=${li.num})}" th:text="${li.subject}"></a>
+			  	   	  </td>	
+			  	   	  <td th:text="${li.writer}"></td>	
+			  	   	  <td th:text="${li.reg_date}"></td>	
+			  	   	  <td th:text="${li.readcount}"></td>			
+			  	  </tr>
+				</table>
+				
+				<!-- 페이징 처리 부분 코드 -->
+				
+				<div class="paging">
+
+				    <!-- 이전 -->
+				    <a th:if="${ph.prev}"
+				       th:href="@{/board/list(page=${ph.startPage - 1},searchType=${searchType},
+        								searchKeyword=${searchKeyword})}">
+				       ◀
+				    </a>
+				    
+				
+				    <!-- 페이지 번호 -->
+				    <!-- startPage부터 endPage까지 숫자를 하나씩 꺼내서 i에 담아라 -->
+				    <!-- ph.startPage = 6,  ph.endPage   = 10 -->
+				    <!-- #numbers.sequence(6,10) → [6,7,8,9,10]  -->
+				    <!-- for(int i=6; i<=10; i++)와 같은 의미임  -->
+				    <span th:each="i : ${#numbers.sequence(ph.startPage, ph.endPage)}">
+				        <a th:href="@{/board/list(page=${i},searchType=${searchType},
+        								searchKeyword=${searchKeyword})}"
+				           th:text="${i}"
+				           th:classappend="${i == ph.pageNum} ? 'active' : ''">
+				        </a>
+				    </span>
+				
+				    <!-- 다음 -->
+				    <a th:if="${ph.next}"
+				       th:href="@{/board/list(page=${ph.endPage + 1},searchType=${searchType},
+        								searchKeyword=${searchKeyword})}">
+				       ▶
+				    </a>
+				
+				</div>
+				
+				
+				<!-- <div id="paging_wrap" style="text-align: center; margin-top: 20px;">
+				    <a th:if="${ph.showPrev}" 
+				       th:href="@{/board/list(page=${ph.beginPage - 1})}" 
+				       style="text-decoration: none; margin: 0 5px;">[이전]</a>
+				
+				    <th:block th:each="i : ${#numbers.sequence(ph.beginPage, ph.endPage)}">
+				        <a th:href="@{/board/list(page=${i})}" 
+				           th:text="${i}" 
+				           th:style="${i == ph.page} ? 'font-weight: bold; color: red; margin: 0 5px;' : 'margin: 0 5px; text-decoration: none;'">
+				        </a>
+				    </th:block>
+				
+				    <a th:if="${ph.showNext}" 
+				       th:href="@{/board/list(page=${ph.endPage + 1})}" 
+				       style="text-decoration: none; margin: 0 5px;">[다음]</a>
+				</div> -->
+				<!-- 페이짗 처리 부분 끝 -->
+				
+				
+			</div>
+			<div id="search_wrap" style="text-align: center; margin-top: 20px;">
+			    <form th:action="@{/board/list}" method="get">
+			        <select name="searchType" style="padding: 5px;">
+			            <option value="subject">제목</option>
+			            <option value="content">내용</option>
+			        </select>
+			        
+			        <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요" style="padding: 5px; width: 200px;">
+			        
+			        <input type="submit" value="검색" style="padding: 5px 15px; cursor: pointer;">
+			        
+			        <input type="button" value="전체보기" th:onclick="|location.href='@{/board/list}'|" style="padding: 5px 10px;">
+			    </form>
+			</div>
+		</div>
+	</section>
+	
+	<footer th:replace="~{/include/header_nav_footer.html::footer}"></footer>
+</body>
+</html>
