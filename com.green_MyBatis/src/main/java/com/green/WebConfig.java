@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer{
  
        // React public 폴더 경로 (본인 프로젝트 경로에 맞게 수정)
         registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:///D:/springbootPjt/com.green_MyBatis/frontend/public/img/");
+                .addResourceLocations("classpath:/static/img/","file:///D:/springbootPjt/com.green_MyBatis/frontend/public/img/");
   
     }
 	

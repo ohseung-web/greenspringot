@@ -21,6 +21,7 @@ import com.green.carproduct.CarProductService;
 import com.green.member.MemberDTO;
 import com.green.member.MemberService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 // @RestController는 @Controller와 @ResponseBody가 합쳐진 "종합 선물 세트" 같은 어노테이션이다.
@@ -206,14 +207,19 @@ public class ApiController {
 	 //   자바 객체(DTO)로 자동으로 바인딩해주는 어노테이션이다.
 	 @PostMapping("/cars/insert")
 	 public int insertCarProduct(
+			 HttpServletRequest request, // 1. 서버의 실제 경로를 찾기 위해 추가
 			 @ModelAttribute CarProductDTO cdto,
 			 @RequestParam("uploadFile") MultipartFile file
 			 ) throws Exception {
 		 
 		 System.out.println("자동차 등록 요청");
+		
+		// 2. 저장 경로 설정 (상대 경로 활용)
+		    // 배포 환경과 로컬 모두에서 작동하도록 프로젝트 내부 static 폴더를 참조합니다.
+		    String savePath = request.getServletContext().getRealPath("/img/car/");
 		 
 		 // 1️ 저장 경로
-		 String savePath = "D:/springbootPjt/com.green_MyBatis/frontend/public/img/car/";
+		 // String savePath = "D:/springbootPjt/com.green_MyBatis/frontend/public/img/car/";
 		 
 		 // import java.io.File
 		 File dir = new File(savePath);
