@@ -5,6 +5,7 @@ import './Home.css';
 export default function Home() {
   const [carList, setCarList] = useState([]);
 
+  // 주석입니다.
   useEffect(() => {
     // 백엔드의 @RestController API 호출
     // 8090 포트의 스프링부트 API 호출
