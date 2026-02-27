@@ -26,8 +26,13 @@ public class SecurityConfig {
 	       http
 	               .cors(cors -> cors.disable())
 	               .csrf(csrf -> csrf.disable());
+	       
 
 	       http
+	       			// ✅ 아래 설정을 추가하여 모든 경로에 대한 접근을 허용합니다.
+			        .authorizeHttpRequests(auth -> auth
+			            .anyRequest().permitAll() 
+			        )
 	               .formLogin(login -> login.disable());
 
 	       return http.build();
