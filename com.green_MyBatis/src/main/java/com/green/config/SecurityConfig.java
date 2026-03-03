@@ -29,7 +29,7 @@ public class SecurityConfig {
 	       
 
 	       http
-	       			// ✅ 아래 설정을 추가하여 모든 경로에 대한 접근을 허용합니다.
+	       			// 아래 설정을 추가하여 모든 경로에 대한 접근을 허용합니다.
 			        .authorizeHttpRequests(auth -> auth
 			            .anyRequest().permitAll() 
 			        )
