@@ -29,15 +29,10 @@ public class WebConfig implements WebMvcConfigurer{
 	// F5누르면 오류뜨는 이슈때문에 반드시 작성한다.
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-	     // 모든 경로를 index.html로 포워딩 (확장자가 없는 경로 대상)
-		// 중첩된 경로(예: /member/signup)까지 모두 index.html로 포워딩하는 설정이다.
-		// {path:[^\\.]*} 대신 아래 패턴을 사용해 보세요.
-        registry.addViewController("/{path1:[^\\.]*}")
-                .setViewName("forward:/index.html");
-        registry.addViewController("/{path1:[^\\.]*}/{path2:[^\\.]*}")
-                .setViewName("forward:/index.html");
-        registry.addViewController("/{path1:[^\\.]*}/{path2:[^\\.]*}/{path3:[^\\.]*}")
-                .setViewName("forward:/index.html");
+
+		// 모든 계층의 경로를 index.html로 포워딩합니다. (가장 권장되는 방식)
+	    registry.addViewController("/**/{path:[^\\.]*}")
+	            .setViewName("forward:/index.html");
 	
 	}
 	
