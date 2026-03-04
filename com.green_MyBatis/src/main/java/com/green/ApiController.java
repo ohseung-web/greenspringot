@@ -1,7 +1,8 @@
 package com.green;
 
-import java.util.Base64;
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -206,43 +207,50 @@ public class ApiController {
 	 //   자바 객체(DTO)로 자동으로 바인딩해주는 어노테이션이다.
 	 @PostMapping("/cars/insert")
 	 public int insertCarProduct(
+			 HttpServletRequest request, // 1. 서버의 실제 경로를 찾기 위해 추가
 			 @ModelAttribute CarProductDTO cdto,
 			 @RequestParam("uploadFile") MultipartFile file
 			 ) throws Exception {
 		 
-		 System.out.println("자동차 등록 요청 (Base64 DB 저장 방식)");
-
-		    // 1. 기존의 OS 확인 및 savePath 설정 로직은 더 이상 필요 없으므로 삭제합니다.
-		    // 2. 파일 폴더 생성(mkdirs) 로직도 삭제합니다.
-		    
-		    String imageData = "";
-		    
-		    if (!file.isEmpty()) {
-		        // [수정 핵심]: 파일을 물리적 서버에 저장하지 않고 문자로 변환합니다.
-		        
-		        // 1) 파일을 바이트 배열로 변환
-		        byte[] fileBytes = file.getBytes();
-		        
-		        // 2) 바이트 배열을 Base64 문자열로 인코딩
-		        String base64Image = Base64.getEncoder().encodeToString(fileBytes);
-		        
-		        // 3) 브라우저가 이미지로 바로 인식할 수 있도록 "data:이미지타입;base64,데이터" 형식을 만듭니다.
-		        // 예: data:image/jpeg;base64,/9j/4AAQSkZJRg...
-		        imageData = "data:" + file.getContentType() + ";base64," + base64Image;
-		        
-		        // DTO의 img 필드에 파일명 대신 이미지 데이터 전체를 세팅합니다.
-		        cdto.setImg(imageData);
-		    } else {
-		        // 파일이 없을 경우 기본 이미지 이름이나 빈 값을 넣습니다.
-		        cdto.setImg(""); 
-		    }
-		    
-		    // 3. DB 저장 (이미 DB의 img 컬럼을 LONGTEXT로 바꾸셨으므로 아주 긴 데이터도 잘 저장됩니다)
-		    carProductService.insertCarProduct(cdto);
-		    
-		    return 1;
+		 System.out.println("자동차 등록 요청");
+		
+		// 2. 저장 경로 설정 (상대 경로 활용)
+		    // 배포 환경과 로컬 모두에서 작동하도록 프로젝트 내부 static 폴더를 참조합니다.
+		    String savePath = request.getServletContext().getRealPath("/img/car/");
+		 
+		 // 저장 경로
+		 // String savePath = "D:/springbootPjt/com.green_MyBatis/frontend/public/img/car/";
+		 
+		 // import java.io.File
+		 File dir = new File(savePath);
+		 if (!dir.exists()) {
+			 dir.mkdirs();
+		 }
+		 
+		 String fileName = "";
+		 
+		 if (!file.isEmpty()) {
+			 // 사용자가 올린 원래 파일명 (예: "my_car.jpg")을 가져온다.
+			 String originalName = file.getOriginalFilename();
+			 
+			 // [중복 방지] 파일명이 겹치지 않게 UUID를 생성한다.
+			 // import java.util.UUID;    
+			 // substring(0, 4)를 사용해 36자리 중 앞 4자리만 가져와서 
+			 // 파일명을 짧게 만든다. (예: "a1b2_my_car.jpg")
+			 fileName = UUID.randomUUID().toString().substring(0, 4) + "_" + originalName;
+			 
+			 File saveFile = new File(savePath + fileName);
+			 file.transferTo(saveFile);
+		 }
+		 
+		 // DTO에 파일명만 세팅한다.
+		 cdto.setImg(fileName);
+		 
+		 //  DB 저장
+		 carProductService.insertCarProduct(cdto);
+		 
+		 return 1;
 	 }
-	 
 	 
 	 
 	// DTO로 한 번에 받기 + MultipartFile만 따로 받기

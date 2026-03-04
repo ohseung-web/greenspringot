@@ -9,7 +9,7 @@
   </select>
   
   <insert id="insertCarProduct" parameterType="carDTO">
-    INSERT INTO carproduct
+    INSERT INTO carProduct
     (carName, price, company, img, info)
     VALUES
     (#{carName}, #{price}, #{company}, #{img}, #{info})
