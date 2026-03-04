@@ -5,6 +5,7 @@ import './Member.css';
 
 export default function Procudt() {
   // 모든 값을 하나의 객체로 관리
+  // 주석
   const [car, setCar] = useState({
     carName: '',
     price: '',
@@ -15,16 +16,16 @@ export default function Procudt() {
 
   const navigate = useNavigate();
 
-  const getBoardList = () => {
-    axios.get('/api/board/list', {
-      params: {
-        searchType: searchType,
-        searchKeyword: searchKeyword,
-        page: page,
-        pageSize: 5,
-      },
-    });
-  };
+  // const getBoardList = () => {
+  //   axios.get('/api/board/list', {
+  //     params: {
+  //       searchType: searchType,
+  //       searchKeyword: searchKeyword,
+  //       page: page,
+  //       pageSize: 5,
+  //     },
+  //   });
+  // };
 
   // 수정했어
 

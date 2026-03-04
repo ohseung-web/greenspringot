@@ -31,7 +31,9 @@ export default function Home() {
               carList.map((car) => (
                 <div className="carItem" key={car.no}>
                   {/* 스프링의 static/img/car 폴더에 있는 이미지 연결 */}
-                  <img src={`/img/car/${car.img}`} alt={car.carName} />
+                  {/* <img src={`/img/car/${car.img}`} alt={car.carName} /> */}
+                  {/* 수정 후: DB에서 가져온 Base64 데이터를 그대로 사용하는 방식 */}
+                  <img src={car.img} alt={car.carName} />
                   <div className="carName">{car.carName}</div>
                   <div className="carPrice">
                     {/* 천단위 콤마 포맷팅 */}
