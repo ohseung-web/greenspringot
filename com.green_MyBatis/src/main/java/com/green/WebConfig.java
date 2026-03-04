@@ -27,17 +27,10 @@ public class WebConfig implements WebMvcConfigurer{
 	
 		@Override
 		public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		    String os = System.getProperty("os.name").toLowerCase();
-		    String uploadPath;
+		    String rootPath = System.getProperty("user.dir");
+		    // 물리적 폴더 경로 (file: 프로토콜을 붙여야 외부 경로로 인식합니다)
+		    String uploadPath = "file:" + rootPath + "/uploads/img/";
 
-		    // 운영체제별 최상위 업로드 폴더 설정
-		    if (os.contains("win")) {
-		        uploadPath = "file:///C:/temp/upload/img/"; // 윈도우는 끝에 /img/ 까지
-		    } else {
-		        uploadPath = "file:/home/node/uploads/img/"; // 클라우드타입(리눅스)
-		    }
-
-		    // /img/ 하위의 모든 요청을 물리적 경로와 매핑
 		    registry.addResourceHandler("/img/**")
 		            .addResourceLocations(uploadPath, "classpath:/static/img/");
 		}

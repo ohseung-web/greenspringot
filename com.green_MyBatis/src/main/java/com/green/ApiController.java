@@ -255,54 +255,31 @@ public class ApiController {
 	 
 	 @PostMapping("/cars/insert")
 	 public int insertCarProduct(
+	         HttpServletRequest request,
 	         @ModelAttribute CarProductDTO cdto,
 	         @RequestParam("uploadFile") MultipartFile file
 	         ) throws Exception {
-	     
-	     System.out.println("자동차 등록 요청");
 
-	     // 1. 운영체제 확인 (Windows vs Linux/Cloudtype)
-	     String os = System.getProperty("os.name").toLowerCase();
-	     String savePath;
+	     // 1. 서버 내부에 'uploads'라는 폴더를 상대 경로로 잡습니다.
+	     // getRealPath가 아니라 프로젝트 폴더 내부에 직접 생성되도록 유도합니다.
+	     String rootPath = System.getProperty("user.dir"); 
+	     String savePath = rootPath + File.separator + "uploads" + File.separator + "img" + File.separator + "car" + File.separator;
 
-	     // 2. WebConfig에서 설정한 물리적 경로와 일치시킵니다.
-	     if (os.contains("win")) {
-	         // 로컬 윈도우 환경 (반드시 폴더 끝에 / 를 붙여주세요)
-	         savePath = "C:/temp/upload/img/car/"; 
-	     } else {
-	         // Cloudtype 리눅스 배포 환경
-	         savePath = "/home/node/uploads/img/car/";
-	     }
-
-	     // 3. 해당 폴더가 없으면 생성
 	     File dir = new File(savePath);
 	     if (!dir.exists()) {
-	         dir.mkdirs();
+	         dir.mkdirs(); // 여기서 폴더가 자동으로 생성됩니다.
 	     }
 
 	     String fileName = "";
-
 	     if (!file.isEmpty()) {
-	         // 사용자가 올린 원래 파일명 가져오기
-	         String originalName = file.getOriginalFilename();
-	         
-	         // [중복 방지] UUID 생성 (앞 4자리만 사용)
-	         fileName = UUID.randomUUID().toString().substring(0, 4) + "_" + originalName;
-	         
-	         // 4. 설정한 물리적 경로에 파일 저장
-	         File saveFile = new File(savePath + fileName);
-	         file.transferTo(saveFile);
+	         fileName = UUID.randomUUID().toString().substring(0, 4) + "_" + file.getOriginalFilename();
+	         file.transferTo(new File(savePath + fileName));
 	     }
 
-	     // 5. DTO에 파일명만 세팅 (DB에는 '파일명.jpg'만 저장됨)
 	     cdto.setImg(fileName);
-	     
-	     // DB 저장
 	     carProductService.insertCarProduct(cdto);
-	     
 	     return 1;
 	 }
-	 
 	 
 	// DTO로 한 번에 받기 + MultipartFile만 따로 받기
      // SpringBoot에서는 객체 바인딩을 사용하면 자동으로 매핑해준다.
