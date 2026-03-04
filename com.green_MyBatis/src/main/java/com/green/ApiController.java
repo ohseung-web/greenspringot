@@ -205,51 +205,102 @@ public class ApiController {
      //     Spring이 자동으로 setter를 호출해준다	
 	 // @ModelAttribute는 스프링 프레임워크에서 클라이언트가 보낸 데이터를 
 	 //   자바 객체(DTO)로 자동으로 바인딩해주는 어노테이션이다.
+//	 @PostMapping("/cars/insert")
+//	 public int insertCarProduct(
+//			 HttpServletRequest request, // 1. 서버의 실제 경로를 찾기 위해 추가
+//			 @ModelAttribute CarProductDTO cdto,
+//			 @RequestParam("uploadFile") MultipartFile file
+//			 ) throws Exception {
+//		 
+//		 System.out.println("자동차 등록 요청");
+//		
+//		// 2. 저장 경로 설정 (상대 경로 활용)
+//		    // 배포 환경과 로컬 모두에서 작동하도록 프로젝트 내부 static 폴더를 참조합니다.
+//		    String savePath = request.getServletContext().getRealPath("/img/car/");
+//		 
+//		 // 저장 경로
+//		 // String savePath = "D:/springbootPjt/com.green_MyBatis/frontend/public/img/car/";
+//		 
+//		 // import java.io.File
+//		 File dir = new File(savePath);
+//		 if (!dir.exists()) {
+//			 dir.mkdirs();
+//		 }
+//		 
+//		 String fileName = "";
+//		 
+//		 if (!file.isEmpty()) {
+//			 // 사용자가 올린 원래 파일명 (예: "my_car.jpg")을 가져온다.
+//			 String originalName = file.getOriginalFilename();
+//			 
+//			 // [중복 방지] 파일명이 겹치지 않게 UUID를 생성한다.
+//			 // import java.util.UUID;    
+//			 // substring(0, 4)를 사용해 36자리 중 앞 4자리만 가져와서 
+//			 // 파일명을 짧게 만든다. (예: "a1b2_my_car.jpg")
+//			 fileName = UUID.randomUUID().toString().substring(0, 4) + "_" + originalName;
+//			 
+//			 File saveFile = new File(savePath + fileName);
+//			 file.transferTo(saveFile);
+//		 }
+//		 
+//		 // DTO에 파일명만 세팅한다.
+//		 cdto.setImg(fileName);
+//		 
+//		 //  DB 저장
+//		 carProductService.insertCarProduct(cdto);
+//		 
+//		 return 1;
+//	 }
+//	 
+	 
 	 @PostMapping("/cars/insert")
 	 public int insertCarProduct(
-			 HttpServletRequest request, // 1. 서버의 실제 경로를 찾기 위해 추가
-			 @ModelAttribute CarProductDTO cdto,
-			 @RequestParam("uploadFile") MultipartFile file
-			 ) throws Exception {
-		 
-		 System.out.println("자동차 등록 요청");
-		
-		// 2. 저장 경로 설정 (상대 경로 활용)
-		    // 배포 환경과 로컬 모두에서 작동하도록 프로젝트 내부 static 폴더를 참조합니다.
-		    String savePath = request.getServletContext().getRealPath("/img/car/");
-		 
-		 // 저장 경로
-		 // String savePath = "D:/springbootPjt/com.green_MyBatis/frontend/public/img/car/";
-		 
-		 // import java.io.File
-		 File dir = new File(savePath);
-		 if (!dir.exists()) {
-			 dir.mkdirs();
-		 }
-		 
-		 String fileName = "";
-		 
-		 if (!file.isEmpty()) {
-			 // 사용자가 올린 원래 파일명 (예: "my_car.jpg")을 가져온다.
-			 String originalName = file.getOriginalFilename();
-			 
-			 // [중복 방지] 파일명이 겹치지 않게 UUID를 생성한다.
-			 // import java.util.UUID;    
-			 // substring(0, 4)를 사용해 36자리 중 앞 4자리만 가져와서 
-			 // 파일명을 짧게 만든다. (예: "a1b2_my_car.jpg")
-			 fileName = UUID.randomUUID().toString().substring(0, 4) + "_" + originalName;
-			 
-			 File saveFile = new File(savePath + fileName);
-			 file.transferTo(saveFile);
-		 }
-		 
-		 // DTO에 파일명만 세팅한다.
-		 cdto.setImg(fileName);
-		 
-		 //  DB 저장
-		 carProductService.insertCarProduct(cdto);
-		 
-		 return 1;
+	         @ModelAttribute CarProductDTO cdto,
+	         @RequestParam("uploadFile") MultipartFile file
+	         ) throws Exception {
+	     
+	     System.out.println("자동차 등록 요청");
+
+	     // 1. 운영체제 확인 (Windows vs Linux/Cloudtype)
+	     String os = System.getProperty("os.name").toLowerCase();
+	     String savePath;
+
+	     // 2. WebConfig에서 설정한 물리적 경로와 일치시킵니다.
+	     if (os.contains("win")) {
+	         // 로컬 윈도우 환경 (반드시 폴더 끝에 / 를 붙여주세요)
+	         savePath = "C:/temp/upload/img/car/"; 
+	     } else {
+	         // Cloudtype 리눅스 배포 환경
+	         savePath = "/home/node/uploads/img/car/";
+	     }
+
+	     // 3. 해당 폴더가 없으면 생성
+	     File dir = new File(savePath);
+	     if (!dir.exists()) {
+	         dir.mkdirs();
+	     }
+
+	     String fileName = "";
+
+	     if (!file.isEmpty()) {
+	         // 사용자가 올린 원래 파일명 가져오기
+	         String originalName = file.getOriginalFilename();
+	         
+	         // [중복 방지] UUID 생성 (앞 4자리만 사용)
+	         fileName = UUID.randomUUID().toString().substring(0, 4) + "_" + originalName;
+	         
+	         // 4. 설정한 물리적 경로에 파일 저장
+	         File saveFile = new File(savePath + fileName);
+	         file.transferTo(saveFile);
+	     }
+
+	     // 5. DTO에 파일명만 세팅 (DB에는 '파일명.jpg'만 저장됨)
+	     cdto.setImg(fileName);
+	     
+	     // DB 저장
+	     carProductService.insertCarProduct(cdto);
+	     
+	     return 1;
 	 }
 	 
 	 
